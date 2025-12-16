@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/admin/', '/private/'],
     },
-    sitemap: 'https://reddit-reader.vercel.app/sitemap.xml',
+    sitemap: 'https://reddit-reader-web.vercel.app//sitemap.xml',
   }
 }

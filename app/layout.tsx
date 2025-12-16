@@ -46,13 +46,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://reddit-reader.vercel.app",
+    url: "https://reddit-reader-web.vercel.app/",
     title: "Reddit Reader - Browse Reddit Without an Account",
     description: "A modern, mobile-friendly Reddit client that lets you browse Reddit posts without an account.",
     siteName: "Reddit Reader",
     images: [
       {
-        url: "https://reddit-reader.vercel.app/og-image.jpg",
+        url: "https://reddit-reader-web.vercel.app//og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Reddit Reader - Browse Reddit Without an Account",
@@ -65,17 +65,17 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Reddit Reader - Browse Reddit Without an Account",
     description: "A modern, mobile-friendly Reddit client that lets you browse Reddit posts without an account.",
-    images: ["https://reddit-reader.vercel.app/og-image.jpg"],
+    images: ["https://reddit-reader-web.vercel.app//og-image.jpg"],
     creator: "@redditreader",
   },
   
   // Additional metadata
-  metadataBase: new URL("https://reddit-reader.vercel.app"),
+  metadataBase: new URL("https://reddit-reader-web.vercel.app/"),
   alternates: {
-    canonical: "https://reddit-reader.vercel.app",
+    canonical: "https://reddit-reader-web.vercel.app/",
   },
   verification: {
-    google: "google-site-verification-code", // Add your Google verification code
+    google: "zpzSjFvX8F6mIHXNTD9gkwKrwz5EHGNcsGHULbej48E", // Add your Google verification code
     yandex: "yandex-verification-code", // Add your Yandex verification code
   },
   category: "social media",
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
   // App Links
   appLinks: {
     web: {
-      url: "https://reddit-reader.vercel.app",
+      url: "https://reddit-reader-web.vercel.app/",
       should_fallback: true,
     },
   },
@@ -139,7 +139,7 @@ function StructuredData() {
           "@context": "https://schema.org",
           "@type": "WebApplication",
           "name": "Reddit Reader",
-          "url": "https://reddit-reader.vercel.app",
+          "url": "https://reddit-reader-web.vercel.app/",
           "description": "A modern, mobile-friendly Reddit client",
           "applicationCategory": "SocialMediaApplication",
           "operatingSystem": "Any",
@@ -151,7 +151,7 @@ function StructuredData() {
           "author": {
             "@type": "Organization",
             "name": "Reddit Reader",
-            "url": "https://reddit-reader.vercel.app"
+            "url": "https://reddit-reader-web.vercel.app/"
           },
           "featureList": [
             "Browse Reddit without account",
