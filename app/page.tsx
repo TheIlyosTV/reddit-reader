@@ -5,9 +5,6 @@ import { PostSkeleton } from "@/components/post-skeletion";
 export default function HomePage() {
   return (
     <div className="space-y-6">
-      <header className="space-y-2">
-        <p className="text-muted-foreground">Browse popular posts</p>
-      </header>
 
       {/* Loading skeleton bilan o'rab olamiz */}
       <Suspense fallback={

@@ -242,28 +242,74 @@ export async function fetchSubredditPosts(subreddit: string = '', limit = 25): P
 
 export async function fetchPostDetails(postId: string, subreddit: string) {
   try {
+    console.log(`🔄 [fetchPostDetails] Fetching: r/${subreddit}/comments/${postId}`);
+    
+    // Production va development uchun turli User-Agent
+    const USER_AGENT = process.env.NODE_ENV === 'production' 
+      ? 'RedditReader/1.0 (+https://reddit-reader-web.vercel.app)'
+      : 'MyRedditApp/1.0 (by /u/AmazingCelebration65)';
+    
     const url = `https://www.reddit.com/r/${subreddit}/comments/${postId}.json`;
-
+    console.log(`🌐 [fetchPostDetails] URL: ${url}`);
+    
+    // Production uchun timeout va signal qo'shamiz
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 soniya
+    
     const response = await fetch(url, {
-      next: { revalidate: 300 },
       headers: {
         'User-Agent': USER_AGENT,
+        'Accept': 'application/json'
       },
+      signal: controller.signal,
+      // Cache settings
+      cache: 'no-store', // Har safar yangi ma'lumot olish
     });
-
+    
+    clearTimeout(timeoutId);
+    
+    console.log(`📊 [fetchPostDetails] Status: ${response.status} ${response.statusText}`);
+    
     if (!response.ok) {
-      throw new Error(`Failed to fetch post details: ${response.status} ${response.statusText}`);
+      // Agar 404 yoki 403 bo'lsa, notFound qaytaramiz
+      if (response.status === 404 || response.status === 403) {
+        console.warn(`⚠️ [fetchPostDetails] Post not found or forbidden: ${postId}`);
+        return null;
+      }
+      
+      // Boshqa xatolar uchun error throw qilamiz
+      const errorText = await response.text().catch(() => 'No error text');
+      console.error(`❌ [fetchPostDetails] API Error: ${response.status}`, errorText.substring(0, 200));
+      throw new Error(`Reddit API error: ${response.status}`);
     }
-
+    
     const data = await response.json();
+    
+    // Ma'lumot strukturasi to'g'ri ekanligini tekshirish
+    if (!data || !data[0] || !data[0].data || !data[0].data.children || !data[0].data.children[0]) {
+      console.error(`❌ [fetchPostDetails] Invalid data structure for post: ${postId}`);
+      return null;
+    }
+    
     const rawPost = data[0].data.children[0].data;
-    const comments = parseComments(data[1].data.children);
-
+    const comments = parseComments(data[1]?.data?.children || []);
+    
+    console.log(`✅ [fetchPostDetails] Success: ${rawPost.title.substring(0, 50)}...`);
+    
     // Post rasmlarini decode qilish
     const post: RedditPost = {
       ...rawPost,
-      thumbnail: decodeRedditUrl(rawPost.thumbnail),
-      url: decodeRedditUrl(rawPost.url),
+      id: rawPost.id || postId,
+      title: rawPost.title || 'Untitled',
+      author: rawPost.author || '[deleted]',
+      subreddit: rawPost.subreddit || subreddit,
+      score: rawPost.score || 0,
+      num_comments: rawPost.num_comments || 0,
+      created_utc: rawPost.created_utc || Date.now() / 1000,
+      thumbnail: decodeRedditUrl(rawPost.thumbnail || ''),
+      url: decodeRedditUrl(rawPost.url || '#'),
+      selftext: rawPost.selftext || '',
+      permalink: rawPost.permalink || `/r/${subreddit}/comments/${postId}`,
       preview: rawPost.preview
         ? {
             images: rawPost.preview.images.map((img: any) => ({
@@ -272,11 +318,33 @@ export async function fetchPostDetails(postId: string, subreddit: string) {
           }
         : undefined,
     };
-
+    
     return { post, comments };
-  } catch (error) {
-    console.error('[Error] fetchPostDetails:', error);
-    return null;
+  } catch (error: any) {
+    console.error('🔥 [fetchPostDetails] Error:', error.message);
+    
+    // Agar timeout bo'lsa yoki network error bo'lsa
+    if (error.name === 'AbortError') {
+      console.error('⏰ [fetchPostDetails] Request timeout');
+    }
+    
+    // Fallback data
+    return {
+      post: {
+        id: postId,
+        title: "Post Not Available",
+        author: "system",
+        subreddit: subreddit,
+        score: 0,
+        num_comments: 0,
+        created_utc: Date.now() / 1000,
+        thumbnail: "",
+        url: "#",
+        selftext: `Unable to load post from r/${subreddit}. The post may have been removed or Reddit API is temporarily unavailable.`,
+        permalink: `/r/${subreddit}/comments/${postId}`,
+      },
+      comments: []
+    };
   }
 }
 
