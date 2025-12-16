@@ -107,18 +107,18 @@ export async function fetchPosts(
   try {
     let url: string;
     
-    // 1. Agar endpoint "r/" bilan boshlansa, URL'ni to'g'ri shaklda yasash
+    // 1. Agar endpoint "r/" bilan boshlansa
     if (endpoint.startsWith('r/')) {
-      // /r/programming -> /r/programming/.json
+      // To'g'ri format: /r/programming/.json
       url = `https://www.reddit.com/${endpoint}/.json?limit=${limit}${after ? `&after=${after}` : ""}`;
     } 
     // 2. Agar bu asosiy kategoriya (popular, hot, top, new) bo'lsa
     else {
-      // popular -> /popular.json
-      url = `https://www.reddit.com/${endpoint}.json?limit=${limit}${after ? `&after=${after}` : ""}`;
+      // To'g'ri format: /popular/.json, /hot/.json, /top/.json, /new/.json
+      url = `https://www.reddit.com/${endpoint}/.json?limit=${limit}${after ? `&after=${after}` : ""}`;
     }
 
-    console.log("🌐 Fetching from URL:", url); // URL'ni log'ga chiqarib tekshirish
+    console.log("🌐 Fetching from URL:", url);
 
     const response = await fetch(url, {
       headers: { 
@@ -129,7 +129,8 @@ export async function fetchPosts(
 
     if (!response.ok) {
       console.error("❌ Reddit API Error:", response.status, response.statusText);
-      throw new Error(`HTTP ${response.status}`);
+      // Fallback ma'lumotlar qaytarish
+      return getFallbackData(endpoint);
     }
 
     const data = await response.json();
@@ -404,3 +405,4 @@ export async function searchReddit(query: string, limit = 25): Promise<RedditPos
     return [];
   }
 }
+

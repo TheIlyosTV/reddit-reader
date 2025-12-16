@@ -180,12 +180,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://www.redditmedia.com" />
         
         {/* Preload critical resources */}
-        <link 
-          rel="preload" 
-          href="/fonts/inter.woff2" 
-          as="font" 
-          type="font/woff2" 
-          crossOrigin="anonymous"
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
         />
         
         {/* Structured Data */}
@@ -228,25 +225,6 @@ export default function RootLayout({
           <SpeedInsights />
         </ThemeProvider>
         
-        {/* Service Worker for PWA */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(
-                    function(registration) {
-                      console.log('Service Worker registration successful with scope: ', registration.scope);
-                    },
-                    function(err) {
-                      console.log('Service Worker registration failed: ', err);
-                    }
-                  );
-                });
-              }
-            `
-          }}
-        />
       </body>
     </html>
   );
