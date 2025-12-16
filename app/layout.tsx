@@ -76,7 +76,7 @@ export const metadata: Metadata = {
   },
   verification: {
     google: "zpzSjFvX8F6mIHXNTD9gkwKrwz5EHGNcsGHULbej48E", // Add your Google verification code
-    yandex: "yandex-verification-code", // Add your Yandex verification code
+    yandex: "23f6ec7d24ff702d", // Add your Yandex verification code
   },
   category: "social media",
   
